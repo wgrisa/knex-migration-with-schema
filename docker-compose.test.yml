@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  test:
+    image: node:12
+    command: npm run test-watch
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 4000
+    depends_on:
+      - dbTest
+    environment:
+      NODE_ENV: test
+      DB_CONN_DATABASE: api-test-db
+      DB_CONN_HOST: dbTest
+      DB_CONN_PASSWORD: password
+      DB_CONN_PORT: 5432
+      DB_CONN_USER: user
+      DATABASE_POOL_MIN: 0
+      DATABASE_POOL_MAX: 10
+
+  dbTest:
+    image: postgres:10
+    ports:
+      - 5432
+    command: postgres -D /run/pgsql-10.4-data -F
+    environment:
+      LOGGING_COLLECTOR: "on"
+      PGDATA: /run/pgsql-10.4-data
+      POSTGRES_DB: api-test-db
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
