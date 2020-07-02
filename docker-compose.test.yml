@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   test:
@@ -27,7 +27,7 @@ services:
       - 5432
     command: postgres -D /run/pgsql-10.4-data -F
     environment:
-      LOGGING_COLLECTOR: "on"
+      LOGGING_COLLECTOR: 'on'
       PGDATA: /run/pgsql-10.4-data
       POSTGRES_DB: api-test-db
       POSTGRES_PASSWORD: password
