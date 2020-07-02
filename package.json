@@ -6,6 +6,7 @@
     "start": "ts-node src/index.ts",
     "test": "mocha --require ts-node/register --recursive ./src/**/*.test.ts",
     "test-watch": "npm test -- -b --watch --watch-files src",
+    "install": "docker-compose -f docker-compose.dev.yml run --rm dev npm i",
     "dtw": "docker-compose -f docker-compose.test.yml run --rm test",
     "dsa": "docker stop $(docker ps -q) || true && docker rm $(docker ps -aq) || true",
     "build": "tsc"
