@@ -1,12 +1,14 @@
-> **Simplifies the execution of database migrations across different schemas, for Knex**
+## Simplifies the execution of database migrations across different schemas with Knex
 
 While [knex.js](https://github.com/knex/knex) supports the execution of queries across different schemas with the use of the `withSchema()` method, there's no simple way to run migration across different schemas programatically, sending the schema name as a parameter to the `knex.migrate()` command.
 
 This library was created to address this issue.
 
-## How to use
+### How to use
 
-### 1. Create new schemas
+This library offers two functions, one to create new schemas, and one to execute migrations on a schema
+
+#### 1. Creating new schemas
 
 Import the `createSchema` method:
 
@@ -20,7 +22,7 @@ Create a schema by providing a `knex` connection and a `schemaName`. If the sche
 await createSchema({ knex, schemaName: 'users' })
 ```
 
-### 2. Execute migrations on a schema
+#### 2. Executing migrations on a schema
 
 Import the `executeSchemaMigration` method:
 
