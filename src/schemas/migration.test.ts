@@ -26,60 +26,78 @@ describe('schema migration', () => {
     await createSchema({ knex, schemaName })
   })
 
-  it('creates knex migrations and users table for a given schema', async () => {
-    await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
+  describe('using migrations object', () => {
+    it('creates knex migrations and users table for a given schema', async () => {
+      await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
 
-    const tables = await getSchemaTables()
+      const tables = await getSchemaTables()
 
-    expect(tables).to.have.length(3)
-    expect(tables).to.have.deep.members([
-      {
-        table_name: 'knex_migrations',
-      },
-      {
-        table_name: 'knex_migrations_lock',
-      },
-      {
-        table_name: 'users',
-      },
-    ])
-  })
-
-  it('accepts migrations for new tables and saves the keys in the knex migrations table', async () => {
-    await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
-    await executeSchemaMigration({
-      knex,
-      schemaName,
-      migrations: { ...migrationsFixture, tokens: tokensMigrationFixture },
+      expect(tables).to.have.length(3)
+      expect(tables).to.have.deep.members([
+        {
+          table_name: 'knex_migrations',
+        },
+        {
+          table_name: 'knex_migrations_lock',
+        },
+        {
+          table_name: 'users',
+        },
+      ])
     })
 
-    const tables = await getSchemaTables()
-    const knexMigrations = (await knex(`${schemaName}.knex_migrations`)).map(({ name }) => name)
+    it('accepts migrations for new tables and saves the keys in the knex migrations table', async () => {
+      await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
+      await executeSchemaMigration({
+        knex,
+        schemaName,
+        migrations: { ...migrationsFixture, tokens: tokensMigrationFixture },
+      })
 
-    expect(tables).to.have.length(4)
-    expect(tables).to.have.deep.members([
-      {
-        table_name: 'knex_migrations',
-      },
-      {
-        table_name: 'knex_migrations_lock',
-      },
-      {
-        table_name: 'users',
-      },
-      {
-        table_name: 'tokens',
-      },
-    ])
+      const tables = await getSchemaTables()
+      const knexMigrations = (await knex(`${schemaName}.knex_migrations`)).map(({ name }) => name)
 
-    expect(knexMigrations).to.have.deep.members(['users', 'tokens'])
+      expect(tables).to.have.length(4)
+      expect(tables).to.have.deep.members([
+        {
+          table_name: 'knex_migrations',
+        },
+        {
+          table_name: 'knex_migrations_lock',
+        },
+        {
+          table_name: 'users',
+        },
+        {
+          table_name: 'tokens',
+        },
+      ])
+
+      expect(knexMigrations).to.have.deep.members(['users', 'tokens'])
+    })
+
+    it('fails when changing the migrations object', async () => {
+      await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
+      const error = await executeSchemaMigration({ knex, schemaName, migrations: {} })
+
+      expect(error).to.match(/The migration directory is corrupt, the following files are missing: users/)
+    })
   })
 
-  it('fails when changing the migrations object', async () => {
-    await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
-    const error = await executeSchemaMigration({ knex, schemaName, migrations: {} })
+  describe.only('using migration directories', () => {
+    it('accepts a directory as parameter', async () => {
+      console.log(__dirname)
+      await executeSchemaMigration({ knex, schemaName, migrationDirectory: `src/test/migration-files` })
+      const tables = await getSchemaTables()
+      console.log('tables', tables)
 
-    expect(error).to.match(/The migration directory is corrupt, the following files are missing: users/)
+      expect(tables).to.have.length(3)
+      const knexMigrations = (await knex(`${schemaName}.knex_migrations`)).map(({ name }) => name)
+      expect(knexMigrations).to.have.deep.members([
+        '0001_create_customers_table.ts',
+        '0002_add_email_column_customers_table.ts',
+      ])
+    })
   })
 })
 
