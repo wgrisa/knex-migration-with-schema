@@ -68,7 +68,7 @@ const buildMigrationSource = ({
   migrations,
 }: {
   schemaName: string
-  migrations?: Migrations
+  migrations: Migrations
 }): MigrationSource<any> => ({
   getMigrations() {
     return Promise.resolve(Object.keys(migrations))
