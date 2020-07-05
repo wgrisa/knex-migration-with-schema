@@ -94,6 +94,18 @@ describe('schema migration', () => {
       const tables = await getSchemaTables()
 
       expect(tables).to.have.length(3)
+      expect(tables).to.have.deep.members([
+        {
+          table_name: 'knex_migrations',
+        },
+        {
+          table_name: 'knex_migrations_lock',
+        },
+        {
+          table_name: 'customers',
+        },
+      ])
+
       const knexMigrations = (await knex(`${schemaName}.knex_migrations`)).map(({ name }) => name)
       expect(knexMigrations).to.have.deep.members([
         '0001_create_customers_table.ts',
