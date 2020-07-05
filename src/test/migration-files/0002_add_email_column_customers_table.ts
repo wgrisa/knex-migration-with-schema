@@ -1,6 +1,6 @@
-import Knex from 'knex'
+import Knex, { Migration } from 'knex'
 
-export default (schemaName: string) => ({
+export default (schemaName: string): Migration => ({
   async up(knex: Knex) {
     return knex.schema.withSchema(schemaName).table('customers', (table) => {
       table.text('email')

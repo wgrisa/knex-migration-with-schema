@@ -3,7 +3,7 @@ import Knex from 'knex'
 
 import { config } from '../config'
 import { createSchema } from './creator'
-import { executeSchemaMigration, Migrations } from './migration'
+import { executeSchemaMigration, Migrations, executeSchemaMigrationFromDir } from './migration'
 
 describe('schema migration', () => {
   const schemaName = 'new_schema'
@@ -84,12 +84,14 @@ describe('schema migration', () => {
     })
   })
 
-  describe.only('using migration directories', () => {
+  describe('using migration directories', () => {
     it('accepts a directory as parameter', async () => {
-      console.log(__dirname)
-      await executeSchemaMigration({ knex, schemaName, migrationDirectory: `src/test/migration-files` })
+      await executeSchemaMigrationFromDir({
+        knex,
+        schemaName,
+        directory: `${__dirname}/../test/migration-files`,
+      })
       const tables = await getSchemaTables()
-      console.log('tables', tables)
 
       expect(tables).to.have.length(3)
       const knexMigrations = (await knex(`${schemaName}.knex_migrations`)).map(({ name }) => name)
@@ -97,6 +99,11 @@ describe('schema migration', () => {
         '0001_create_customers_table.ts',
         '0002_add_email_column_customers_table.ts',
       ])
+    })
+
+    it('fails if directory does not exist', async () => {
+      const error = await executeSchemaMigrationFromDir({ knex, schemaName, directory: 'invalid' })
+      expect(error).to.match(/Could not read directory/)
     })
   })
 })

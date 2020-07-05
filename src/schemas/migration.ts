@@ -1,5 +1,5 @@
 import Knex, { Migration, MigrationSource } from 'knex'
-import { readdirSync } from 'fs'
+import { promises } from 'fs'
 
 export interface Migrations {
   [migrationName: string]: (schemaName: string) => Migration
@@ -9,35 +9,49 @@ export const executeSchemaMigration = async ({
   knex,
   schemaName,
   migrations,
-  migrationDirectory,
 }: {
   knex: Knex
   schemaName: string
-  migrations?: Migrations
-  migrationDirectory?: string
+  migrations: Migrations
 }): Promise<any> => {
-  let migrationSource
+  const migrationSource = buildMigrationSource({ schemaName, migrations })
 
-  if (migrationDirectory) {
-    const fullpath = `${__dirname}/../../${migrationDirectory}/`
+  return knex.migrate
+    .latest({
+      schemaName,
+      migrationSource,
+    })
+    .catch((error) => {
+      return error
+    })
+}
 
-    const fileNames = readdirSync(fullpath)
-    const mgs: Migrations = {}
-    console.log('oi')
-    for (const filename of fileNames) {
-      const file = `${fullpath}/${filename}`
-      console.log('file ===>', file)
-
-      await import(file).then((migration) => {
-        mgs[filename] = migration.default
-      })
-    }
-    console.log('mgs', JSON.stringify(mgs, null, 2))
-
-    migrationSource = buildMigrationSource({ schemaName, migrations: mgs })
-  } else {
-    migrationSource = buildMigrationSource({ schemaName, migrations })
+export const executeSchemaMigrationFromDir = async ({
+  knex,
+  schemaName,
+  directory,
+}: {
+  knex: Knex
+  schemaName: string
+  directory: string
+}): Promise<any> => {
+  let fileNames
+  try {
+    fileNames = await promises.readdir(directory)
+  } catch {
+    return `Could not read directory "${directory}"`
   }
+
+  const mgs: Migrations = {}
+
+  for (const filename of fileNames) {
+    const filePath = `${directory}/${filename}`
+    await import(filePath).then((migration) => {
+      mgs[filename] = migration.default
+    })
+  }
+
+  const migrationSource = buildMigrationSource({ schemaName, migrations: mgs })
 
   return knex.migrate
     .latest({

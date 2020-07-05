@@ -1,6 +1,6 @@
 import Knex, { Migration } from 'knex'
 
-const migration = (schemaName: string): Migration => ({
+export default (schemaName: string): Migration => ({
   async up(knex: Knex) {
     return knex.schema.withSchema(schemaName).createTable('customers', (table) => {
       table.increments('id').primary()
@@ -11,5 +11,3 @@ const migration = (schemaName: string): Migration => ({
     return knex.schema.withSchema(schemaName).dropTableIfExists('customers')
   },
 })
-
-export default migration
