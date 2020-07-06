@@ -1,15 +1,17 @@
 {
   "name": "knex-migration-with-schema",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "dist/schemas/index.js",
+  "types": "dist/schemas/index.d.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "mocha --require ts-node/register --recursive ./src/**/*.test.ts",
     "test-watch": "npm test -- -b --watch --watch-files src",
-    "install": "docker-compose -f docker-compose.test.yml run --rm test npm i",
+    "dnpmi": "docker-compose -f docker-compose.test.yml run --rm test npm i",
     "dtw": "docker-compose -f docker-compose.test.yml run --rm test",
     "dsa": "docker stop $(docker ps -q) || true && docker rm $(docker ps -aq) || true",
-    "build": "tsc"
+    "lint": "eslint . --ext .ts",
+    "prepublishOnly": "npm run dtw && npm run lint && tsc"
   },
   "author": "William Grisa",
   "license": "MIT",
