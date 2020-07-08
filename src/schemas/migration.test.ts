@@ -1,9 +1,9 @@
 import { expect } from 'chai'
 import Knex from 'knex'
 
-import { config } from '../config'
+import { config } from '../test/config'
 import { createSchema } from './creator'
-import { executeSchemaMigration, Migrations, executeSchemaMigrationFromDir } from './migration'
+import { executeSchemaMigration, executeSchemaMigrationFromDir, Migrations } from './migration'
 
 describe('schema migration', () => {
   const schemaName = 'new_schema'

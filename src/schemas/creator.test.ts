@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import Knex from 'knex'
 
-import { config } from '../config'
+import { config } from '../test/config'
 import { createSchema } from './creator'
 
 describe('schema creator', () => {
