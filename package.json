@@ -15,6 +15,7 @@
   },
   "author": "William Grisa <grisa.william@gmail.com>",
   "bugs": "https://github.com/wgrisa/knex-migration-with-schema/issues",
+  "homepage": "https://github.com/wgrisa/knex-migration-with-schema",
   "license": "MIT",
   "repository": {
     "type": "git",
