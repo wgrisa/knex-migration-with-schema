@@ -1,11 +1,29 @@
-import Knex, { Migration, MigrationSource } from 'knex'
 import { promises } from 'fs'
+import Knex, { Migration, MigrationSource } from 'knex'
 
 export interface Migrations {
   [migrationName: string]: (schemaName: string) => Migration
 }
 
-export const executeSchemaMigration = async ({
+const buildMigrationSource = ({
+  schemaName,
+  migrations,
+}: {
+  schemaName: string
+  migrations: Migrations
+}): MigrationSource<any> => ({
+  getMigrations() {
+    return Promise.resolve(Object.keys(migrations))
+  },
+  getMigrationName(migration) {
+    return migration
+  },
+  getMigration(migration) {
+    return migrations[migration](schemaName)
+  },
+})
+
+export const executeSchemaMigration = ({
   knex,
   schemaName,
   migrations,
@@ -35,48 +53,23 @@ export const executeSchemaMigrationFromDir = async ({
   schemaName: string
   directory: string
 }): Promise<any> => {
-  let fileNames
+  let fileNames: string[]
+
   try {
     fileNames = await promises.readdir(directory)
   } catch {
     return `Could not read directory "${directory}"`
   }
 
-  const mgs: Migrations = {}
+  const migrations: Migrations = {}
 
   for (const filename of fileNames) {
     const filePath = `${directory}/${filename}`
+
     await import(filePath).then((migration) => {
-      mgs[filename] = migration.default
+      migrations[filename] = migration.default
     })
   }
 
-  const migrationSource = buildMigrationSource({ schemaName, migrations: mgs })
-
-  return knex.migrate
-    .latest({
-      schemaName,
-      migrationSource,
-    })
-    .catch((error) => {
-      return error
-    })
+  return executeSchemaMigration({ knex, schemaName, migrations })
 }
-
-const buildMigrationSource = ({
-  schemaName,
-  migrations,
-}: {
-  schemaName: string
-  migrations: Migrations
-}): MigrationSource<any> => ({
-  getMigrations() {
-    return Promise.resolve(Object.keys(migrations))
-  },
-  getMigrationName(migration) {
-    return migration
-  },
-  getMigration(migration) {
-    return migrations[migration](schemaName)
-  },
-})

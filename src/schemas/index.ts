@@ -1,2 +1,2 @@
 export { createSchema } from './creator'
-export { Migrations, executeSchemaMigration } from './migration'
+export { Migrations, executeSchemaMigration, executeSchemaMigrationFromDir } from './migration'

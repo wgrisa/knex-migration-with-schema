@@ -85,7 +85,7 @@ describe('schema migration', () => {
   })
 
   describe('using migration directories', () => {
-    it('accepts a directory as parameter', async () => {
+    it('executes the migration using a directory as parameter', async () => {
       await executeSchemaMigrationFromDir({
         knex,
         schemaName,
@@ -113,7 +113,7 @@ describe('schema migration', () => {
       ])
     })
 
-    it('fails if directory does not exist', async () => {
+    it('fails if the directory does not exist', async () => {
       const error = await executeSchemaMigrationFromDir({ knex, schemaName, directory: 'invalid' })
       expect(error).to.match(/Could not read directory/)
     })
