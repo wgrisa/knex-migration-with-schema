@@ -15,7 +15,7 @@ We use docker compose for running the tests. You need to have [docker](https://w
 
 ```bash
   npm run dnpmi
-  npm run dtw
+  npm run dt
 ```
 
 ## We Develop with Github

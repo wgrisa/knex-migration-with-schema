@@ -1,9 +1,9 @@
-version: '3'
+version: "3"
 
 services:
   test:
     image: node:12
-    command: npm run test-watch
+    command: npm run test
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app
@@ -27,7 +27,7 @@ services:
       - 5432
     command: postgres -D /run/pgsql-10.4-data -F
     environment:
-      LOGGING_COLLECTOR: 'on'
+      LOGGING_COLLECTOR: "on"
       PGDATA: /run/pgsql-10.4-data
       POSTGRES_DB: api-test-db
       POSTGRES_PASSWORD: password

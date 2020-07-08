@@ -8,10 +8,11 @@
     "test": "mocha --require ts-node/register --recursive ./src/**/*.test.ts",
     "test-watch": "npm test -- -b --watch --watch-files src",
     "dnpmi": "docker-compose -f docker-compose.test.yml run --rm test npm i",
-    "dtw": "docker-compose -f docker-compose.test.yml run --rm test",
+    "dt": "docker-compose -f docker-compose.test.yml run --rm test npm run test -- --exit",
+    "dtw": "docker-compose -f docker-compose.test.yml run --rm test npm run test-watch",
     "dsa": "docker stop $(docker ps -q) || true && docker rm $(docker ps -aq) || true",
     "lint": "eslint . --ext .ts",
-    "prepublishOnly": "npm run dtw && npm run lint && tsc"
+    "prepublishOnly": "npm run dnpmi && npm run dt && npm run lint && tsc"
   },
   "author": "William Grisa <grisa.william@gmail.com>",
   "bugs": "https://github.com/wgrisa/knex-migration-with-schema/issues",
