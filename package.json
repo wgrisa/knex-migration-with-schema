@@ -13,7 +13,8 @@
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run dtw && npm run lint && tsc"
   },
-  "author": "William Grisa",
+  "author": "William Grisa <grisa.william@gmail.com>",
+  "bugs": "https://github.com/wgrisa/knex-migration-with-schema/issues",
   "license": "MIT",
   "repository": {
     "type": "git",
