@@ -6,6 +6,18 @@ We want to make contributing to this project as easy and transparent as possible
 - Proposing new features
 - Submitting a pull request for new features of bug fixes
 
+## Running the tests locally
+
+We use docker compose for running the tests. You need to have [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/) installed.
+
+1. Start your Docker
+1. Run the following commands in the root folder of this project
+
+```bash
+  npm run dnpmi
+  npm run dtw
+```
+
 ## We Develop with Github
 
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
