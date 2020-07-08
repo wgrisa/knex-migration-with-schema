@@ -1,6 +1,6 @@
 {
   "name": "knex-migration-with-schema",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/schemas/index.js",
   "types": "dist/schemas/index.d.ts",
   "scripts": {
@@ -15,6 +15,10 @@
     "prepublishOnly": "npm run dnpmi && npm run dt && npm run lint && tsc"
   },
   "author": "William Grisa <grisa.william@gmail.com>",
+  "contributors": [
+    "William Grisa",
+    "Rodrigo Vieira"
+  ],
   "bugs": "https://github.com/wgrisa/knex-migration-with-schema/issues",
   "homepage": "https://github.com/wgrisa/knex-migration-with-schema",
   "license": "MIT",
