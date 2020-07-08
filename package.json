@@ -15,6 +15,10 @@
   },
   "author": "William Grisa",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wgrisa/knex-migration-with-schema.git"
+  },
   "dependencies": {
     "@types/node": "^14.0.14",
     "knex": "^0.21.1",
