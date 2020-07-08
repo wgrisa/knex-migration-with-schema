@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/knex-migration-with-schema.svg)](https://badge.fury.io/js/knex-migration-with-schema)
+
 ## Simplifies the execution of database migrations across different schemas with Knex
 
 While [knex.js](https://github.com/knex/knex) supports the execution of queries across different schemas with the use of the `withSchema()` method, there's no simple way to run migration across different schemas programmatically, sending the schema name as a parameter to the `knex.migrate()` command.
@@ -8,7 +10,11 @@ This library was created to address this issue.
 
 This library offers two functions, one to create new schemas, and one to execute migrations on a schema
 
-#### 1. Creating new schemas
+```bash
+npm i knex-migration-with-schema
+```
+
+### Creating new schemas
 
 Import the `createSchema` method:
 
@@ -22,7 +28,7 @@ Create a schema by providing a `knex` connection and a `schemaName`. If the sche
 await createSchema({ knex, schemaName: 'users' })
 ```
 
-#### 2. Executing migrations on a schema
+### Executing migrations on a schema
 
 Import the `executeSchemaMigration` method:
 
@@ -84,4 +90,32 @@ const userMigrations = {
 )
 ```
 
-You may want to store these migrations in a dedicated file and import them, or read for them from the filesystem (support to migrations from the filesystem may be supported in the future...your pull request is welcome! 😉)
+### Executing migrations on a schema based on a directory
+
+```js
+await executeSchemaMigrationFromDir({
+  knex,
+  schemaName,
+  directory: `migration_files`,
+})
+```
+
+Using the `executeSchemaMigrationFromDir` function, you have access to the schema name in your migration files.
+
+```js
+// migration_files/0001_create_customers_table.ts
+
+import Knex, { Migration } from 'knex'
+
+export default (schemaName: string): Migration => ({
+  async up(knex: Knex) {
+    return knex.schema.withSchema(schemaName).createTable('customers', (table) => {
+      table.increments('id').primary()
+      table.text('name').notNullable()
+    })
+  },
+  async down(knex: Knex) {
+    return knex.schema.withSchema(schemaName).dropTableIfExists('customers')
+  },
+})
+```
