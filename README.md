@@ -1,6 +1,6 @@
 ## Simplifies the execution of database migrations across different schemas with Knex
 
-While [knex.js](https://github.com/knex/knex) supports the execution of queries across different schemas with the use of the `withSchema()` method, there's no simple way to run migration across different schemas programatically, sending the schema name as a parameter to the `knex.migrate()` command.
+While [knex.js](https://github.com/knex/knex) supports the execution of queries across different schemas with the use of the `withSchema()` method, there's no simple way to run migration across different schemas programmatically, sending the schema name as a parameter to the `knex.migrate()` command.
 
 This library was created to address this issue.
 
