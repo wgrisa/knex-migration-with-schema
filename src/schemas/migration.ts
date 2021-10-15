@@ -1,8 +1,8 @@
 import { promises } from 'fs'
-import Knex, { Migration, MigrationSource } from 'knex'
+import { Knex } from 'knex'
 
 export interface Migrations {
-  [migrationName: string]: (schemaName: string) => Migration
+  [migrationName: string]: (schemaName: string) => Knex.Migration
 }
 
 const buildMigrationSource = ({
@@ -11,7 +11,7 @@ const buildMigrationSource = ({
 }: {
   schemaName: string
   migrations: Migrations
-}): MigrationSource<any> => ({
+}): Knex.MigrationSource<any> => ({
   getMigrations() {
     return Promise.resolve(Object.keys(migrations))
   },

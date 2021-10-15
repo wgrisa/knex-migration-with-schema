@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import Knex from 'knex'
+import { knex, Knex } from 'knex'
 
 import { config } from '../test/config'
 import { createSchema } from './creator'
@@ -7,11 +7,11 @@ import { executeSchemaMigration, executeSchemaMigrationFromDir, Migrations } fro
 
 describe('schema migration', () => {
   const schemaName = 'new_schema'
-  const knex = Knex(config.knex)
+  const knexConnection = knex(config.knex)
 
   const getSchemaTables = async () =>
     (
-      await knex.raw(`
+      await knexConnection.raw(`
       SELECT
         table_name
       FROM
@@ -22,13 +22,13 @@ describe('schema migration', () => {
     ).rows
 
   beforeEach(async () => {
-    await knex.raw(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`)
-    await createSchema({ knex, schemaName })
+    await knexConnection.raw(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`)
+    await createSchema({ knex: knexConnection, schemaName })
   })
 
   describe('using migrations object', () => {
     it('creates knex migrations and users table for a given schema', async () => {
-      await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
+      await executeSchemaMigration({ knex: knexConnection, schemaName, migrations: migrationsFixture })
 
       const tables = await getSchemaTables()
 
@@ -47,15 +47,15 @@ describe('schema migration', () => {
     })
 
     it('accepts migrations for new tables and saves the keys in the knex migrations table', async () => {
-      await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
+      await executeSchemaMigration({ knex: knexConnection, schemaName, migrations: migrationsFixture })
       await executeSchemaMigration({
-        knex,
+        knex: knexConnection,
         schemaName,
         migrations: { ...migrationsFixture, tokens: tokensMigrationFixture },
       })
 
       const tables = await getSchemaTables()
-      const knexMigrations = (await knex(`${schemaName}.knex_migrations`)).map(({ name }) => name)
+      const knexMigrations = (await knexConnection(`${schemaName}.knex_migrations`)).map(({ name }) => name)
 
       expect(tables).to.have.length(4)
       expect(tables).to.have.deep.members([
@@ -77,8 +77,8 @@ describe('schema migration', () => {
     })
 
     it('fails when changing the migrations object', async () => {
-      await executeSchemaMigration({ knex, schemaName, migrations: migrationsFixture })
-      const error = await executeSchemaMigration({ knex, schemaName, migrations: {} })
+      await executeSchemaMigration({ knex: knexConnection, schemaName, migrations: migrationsFixture })
+      const error = await executeSchemaMigration({ knex: knexConnection, schemaName, migrations: {} })
 
       expect(error).to.match(/The migration directory is corrupt, the following files are missing: users/)
     })
@@ -87,7 +87,7 @@ describe('schema migration', () => {
   describe('using migration directories', () => {
     it('executes the migration using a directory as parameter', async () => {
       await executeSchemaMigrationFromDir({
-        knex,
+        knex: knexConnection,
         schemaName,
         directory: `${__dirname}/../test/migration-files`,
       })
@@ -106,7 +106,7 @@ describe('schema migration', () => {
         },
       ])
 
-      const knexMigrations = (await knex(`${schemaName}.knex_migrations`)).map(({ name }) => name)
+      const knexMigrations = (await knexConnection(`${schemaName}.knex_migrations`)).map(({ name }) => name)
       expect(knexMigrations).to.have.deep.members([
         '0001_create_customers_table.ts',
         '0002_add_email_column_customers_table.ts',
@@ -114,7 +114,7 @@ describe('schema migration', () => {
     })
 
     it('fails if the directory does not exist', async () => {
-      const error = await executeSchemaMigrationFromDir({ knex, schemaName, directory: 'invalid' })
+      const error = await executeSchemaMigrationFromDir({ knex: knexConnection, schemaName, directory: 'invalid' })
       expect(error).to.match(/Could not read directory/)
     })
   })

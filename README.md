@@ -105,9 +105,9 @@ Using the `executeSchemaMigrationFromDir` function, you have access to the schem
 ```js
 // migration_files/0001_create_customers_table.ts
 
-import Knex, { Migration } from 'knex'
+import { Knex } from 'knex'
 
-export default (schemaName: string): Migration => ({
+export default (schemaName: string): Knex.Migration => ({
   async up(knex: Knex) {
     return knex.schema.withSchema(schemaName).createTable('customers', (table) => {
       table.increments('id').primary()
