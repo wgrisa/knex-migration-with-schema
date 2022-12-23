@@ -28,7 +28,7 @@ export const executeSchemaMigration = ({
   schemaName,
   migrations,
 }: {
-  knex: Knex
+  knex: any
   schemaName: string
   migrations: Migrations
 }): Promise<any> => {
@@ -49,7 +49,7 @@ export const executeSchemaMigrationFromDir = async ({
   schemaName,
   directory,
 }: {
-  knex: Knex
+  knex: any
   schemaName: string
   directory: string
 }): Promise<any> => {
